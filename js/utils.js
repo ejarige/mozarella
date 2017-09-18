@@ -1,7 +1,4 @@
 function getPnj(){
-    loadJSON('../mozarella/assets/restaurants.json', function(e){
-        var restos = e;
-
         // type pnj : plat/price/plat+price
         var type = getRand(1,5);
 
@@ -73,31 +70,11 @@ function getPnj(){
             return {price: price, food: food,results: results};
         };
 
-        console.log('price : '+JSON.stringify(getRandPrice()));
-        console.log('food : '+JSON.stringify(getRandFood()));
-        console.log('both : '+JSON.stringify(getRandFoodAndPrice()));
-
         switch(type){
-            case 1  : return getRandFood();          break;
-            case 2  : return getRandPrice();         break;
-            default : return getRandFoodAndPrice();  break;
+            case 1  : return getRandFood(); break;
+            case 2  : return getRandPrice(); break;
+            default : return getRandFoodAndPrice(); break;
         }
-
-    });
-}
-
-function loadJSON(file, callback) {
-
-    var xobj = new XMLHttpRequest();
-    xobj.overrideMimeType("application/json");
-    xobj.open('GET', file, true); // Replace 'my_data' with the path to your file
-    xobj.onreadystatechange = function () {
-        if (xobj.readyState == 4 && xobj.status == "200") {
-            // Required use of an anonymous callback as .open will NOT return a value but simply returns undefined in asynchronous mode
-            callback(JSON.parse(xobj.responseText));
-        }
-    };
-    xobj.send(null);
 }
 
 function getRand(min, max){

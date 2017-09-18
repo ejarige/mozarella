@@ -1,7 +1,8 @@
+var restos =
 [
   {
     "name"    : "La Boîte à Pizza",
-    "image"   : "pizza.jpg",
+    "image"   : "pizza",
     "x"       : 643,
     "y"       : 406,
     "priceMin": 12,
@@ -12,7 +13,7 @@
   },
   {
     "name"      : "L'Azzuro",
-    "image"     : "pizza.jpg",
+    "image"     : "pizza",
     "x"         : 640,
     "y"         : 557,
     "priceMin"  : 8,
@@ -23,6 +24,7 @@
   },
   {
     "name"      : "Halal Martil",
+    "image"     : "kebab",
     "x"         : 558,
     "y"         : 449,
     "priceMin"  : 5,
@@ -34,6 +36,7 @@
   },
   {
     "name"      : "Le Pékin",
+    "image"     : "chinois",
     "x"         : 898,
     "y"         : 532,
     "priceMin"  : 7,
@@ -44,6 +47,7 @@
   },
   {
     "name"      : "Restaurant universitaire + cafétaria",
+    "image"     : "sandwich",
     "x"         : 434,
     "y"         : 642,
     "priceMin"  : 2.5,
@@ -55,6 +59,7 @@
   },
   {
     "name"      : "Le Goulu",
+    "image"     : "homard",
     "x"         : 326,
     "y"         : 78,
     "priceMin"  : 18,
@@ -67,6 +72,7 @@
   },
   {
     "name"      : "Chez Yvette",
+    "image"     : "raclette",
     "x"         : 452,
     "y"         : 23,
     "priceMin"  : 0,
@@ -79,22 +85,24 @@
   },
   {
     "name"      : "Les Délices de Champollion",
+    "image"     : "sandwich",
     "x"         : 472,
     "y"         : 514,
     "priceMin"  : 4,
     "priceMax"  : 8,
     "food"      : [
-      "Sandwhich"
+      "sandwich"
     ]
   },
   {
     "name"      : "Nicouleau",
+    "image"     : "sandwich",
     "x"         : 743,
     "y"         : 307,
     "priceMin"  : 4,
     "priceMax"  : 8,
     "food"      : [
-      "Sandwhich"
+      "sandwich"
     ]
   }
 ]
