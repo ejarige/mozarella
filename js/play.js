@@ -36,8 +36,10 @@ var playState = {
 		this.sprite.events.onInputDown.add(this.onDown, this);
 	},
 	
-	Restaurant: function(x, y) {
-		this.sprite = game.add.sprite(x, y, 'star');
+	Restaurant: function(x, y, sprite) {
+		this.sprite = game.add.sprite(x, y, sprite);
+
+		this.sprite.anchor.setTo(0.5, 0.5);
 		game.physics.enable(this.sprite, Phaser.Physics.ARCADE);
 		this.sprite.inputEnabled = true;
 		
@@ -48,6 +50,7 @@ var playState = {
 				//move NPC to restaurant
 			}
 		};
+
 		this.sprite.events.onInputDown.add(this.onDown, this);
 	},
 	
@@ -62,11 +65,8 @@ var playState = {
 		game.add.image(0, 0, 'map');
 
 		for(var r in restos){
-			game.add.sprite(restos[r].x, restos[r].y, restos[r].image).anchor.setTo(0.5, 0.5);
+			restos[r].obj = new this.Restaurant(restos[r].x,restos[r].y,restos[r].image);
 		}
-
-		var pnj = getPnj();
-		game.debug.text(JSON.stringify(pnj));
 		
 		game.physics.startSystem(Phaser.Physics.ARCADE);
 		
