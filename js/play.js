@@ -1,13 +1,16 @@
 var playState = {
-	CharacterManager: function() {
+	SelectionManager: function() {
 		this.selectedCharacter = null;
-		
+		this.selectedRestaurant = null;
+
 		this.selectCharacter = function(character) {
 			this.selectedCharacter = character;
 		};
-		
+		this.selectRestaurant = function(restaurant) {
+			this.selectedRestaurant = restaurant;
+		};
+
 		this.onRightDown = function() {
-			this.isSelected = false;
 			this.selectedCharacter = null;
 		};
 		game.input.activePointer.rightButton.onDown.add(this.onRightDown, this);
@@ -23,37 +26,39 @@ var playState = {
 		this.pathIndex = 0;
 		
 		//speed
-		this.speed = 100;
-		
-		this.isSelected = false;
+		this.speed = 200;
+
+		this.isMoving = false;
 		
 		this.onDown = function() {
-			if (game.input.activePointer.leftButton.isDown) {
-				this.isSelected = true;
+			if (game.input.activePointer.leftButton.isDown && !this.isMoving) {
 				manager.selectCharacter(this);
 			}
 		};
 		this.sprite.events.onInputDown.add(this.onDown, this);
 	},
 	
-	Restaurant: function(x, y, sprite) {
-		this.sprite = game.add.sprite(x, y, sprite);
+	Restaurant: function(manager, resto) {
+		this.obj = resto;
+		this.sprite = game.add.sprite(resto.x, resto.y, resto.image);
 
 		this.sprite.anchor.setTo(0.5, 0.5);
 		game.physics.enable(this.sprite, Phaser.Physics.ARCADE);
 		this.sprite.inputEnabled = true;
-		
+
 		this.isSelected = false;
-		
-		this.onDown = function() {
-			if (game.input.activePointer.leftButton.isDown && this.characterManager.selectedCharacter != null) {
+
+		this.onDown = function () {
+			if (game.input.activePointer.leftButton.isDown && manager.selectedCharacter != null) {
 				//move NPC to restaurant
+				this.isSelected = true;
+				manager.selectRestaurant(this);
 			}
 		};
 
 		this.sprite.events.onInputDown.add(this.onDown, this);
 	},
-	
+
 	preload: function() {
 		game.load.image('star', 'assets/star.png');
 	},
@@ -64,42 +69,67 @@ var playState = {
 		
 		game.add.image(0, 0, 'map');
 
+		game.physics.startSystem(Phaser.Physics.ARCADE);
+
+		//singleton manager
+		this.selectionManager = new this.SelectionManager();
+
+		//create restaurants
 		for(var r in restos){
-			restos[r].obj = new this.Restaurant(restos[r].x,restos[r].y,restos[r].image);
+			restos[r].obj = new this.Restaurant(this.selectionManager, restos[r]);
 		}
 		
-		game.physics.startSystem(Phaser.Physics.ARCADE);
-		
-		//singleton
-		this.characterManager = new this.CharacterManager();
-		
-		this.npc_test = new this.Character(this.characterManager, 300, 650);
-		this.resto_test = new this.Restaurant(500, 300);
-		
-		this.hasSelectedNPC = false;
-		
+		this.npc_test = new this.Character(this.selectionManager, 300, 650);
+		this.npc_test = new this.Character(this.selectionManager, 300, 650);
+		this.npc_test = new this.Character(this.selectionManager, 300, 650);
+		this.npc_test = new this.Character(this.selectionManager, 300, 650);
+		this.npc_test = new this.Character(this.selectionManager, 300, 650);
+		this.npc_test = new this.Character(this.selectionManager, 300, 650);
+		this.npc_test = new this.Character(this.selectionManager, 300, 650);
+
 		game.input.mouse.capture = true;
 	},
 	
 	update: function() {
 		//character selection
-		if (this.characterManager.selectedCharacter == null) {
+		if (this.selectionManager.selectedCharacter == null) {
 			console.log("a");
 		}
 		//restaurant selection
 		else {
-			console.log("b");
+			if (this.selectionManager.selectedRestaurant == null) {
+				console.log("b");
+			}
+			else {
+				console.log('c');
+				this.moveCharacter(this.selectionManager.selectedCharacter, this.getPath(this.selectionManager.selectedRestaurant));
+			}
 		}
 	},
+
+	//return path leading to selected restaurant
+	getPath: function(restaurant) {
+		//temp test
+		var path = [];
+		for(var p in restaurant.obj.path)
+			path.push(new Phaser.Point(restaurant.obj.path[p][0], restaurant.obj.path[p][1]));
+
+		return path;
+	},
 	
-	/*moveCharacter: function(character, path) {
+	moveCharacter: function(character, path) {
 		if (character.pathIndex < path.length) {
 			game.physics.arcade.moveToXY(character.sprite, path[character.pathIndex].x, path[character.pathIndex].y, character.speed);
 			if (game.physics.arcade.distanceToXY(character.sprite, path[character.pathIndex].x, path[character.pathIndex].y) < 8) {
 				character.pathIndex++;
 			}
 		}
-	},*/
+		else {
+			character.sprite.body.velocity.x = 0;
+			character.sprite.body.velocity.y = 0;
+			character.sprite.kill();
+		}
+	},
 	
 	
 };
