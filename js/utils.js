@@ -28,8 +28,10 @@ function getPnj(){
             var i = 0;
             for(var r in restos){
                 for(var f in restos[r].food){
-                    foods[i] = restos[r].food[f];
-                    i++;
+                    if(!~foods.indexOf(restos[r].food)) {
+                        foods[i] = restos[r].food[f];
+                        i++;
+                    }
                 }
             }
 
@@ -52,8 +54,10 @@ function getPnj(){
             var i = 0;
             for(var r in priceAll.results){
                 for(var f in priceAll.results[r].food){
-                    foods[i] = priceAll.results[r].food[f];
-                    i++;
+                    if(!~foods.indexOf(priceAll.results[r].food)){
+                        foods[i] = priceAll.results[r].food[f];
+                        i++;
+                    }
                 }
             }
 

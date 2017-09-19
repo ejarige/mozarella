@@ -1,9 +1,9 @@
 var restos =
 [
   {
-    "name"    : "La Boîte à Pizza",
+    "name"    : "L'Azzuro",
     "image"   : "pizza",
-    "x"       : 643,
+    "x"       : 603,
     "y"       : 406,
     "priceMin": 12,
     "priceMax": 16,
@@ -12,9 +12,9 @@ var restos =
     ]
   },
   {
-    "name"      : "L'Azzuro",
+    "name"      : "La Boîte à Pizza",
     "image"     : "pizza",
-    "x"         : 640,
+    "x"         : 600,
     "y"         : 557,
     "priceMin"  : 8,
     "priceMax"  : 15,
@@ -25,7 +25,7 @@ var restos =
   {
     "name"      : "Halal Martil",
     "image"     : "kebab",
-    "x"         : 558,
+    "x"         : 518,
     "y"         : 449,
     "priceMin"  : 5,
     "priceMax"  : 10,
@@ -37,7 +37,7 @@ var restos =
   {
     "name"      : "Le Pékin",
     "image"     : "chinois",
-    "x"         : 898,
+    "x"         : 858,
     "y"         : 532,
     "priceMin"  : 7,
     "priceMax"  : 12,
@@ -48,7 +48,7 @@ var restos =
   {
     "name"      : "Restaurant universitaire + cafétaria",
     "image"     : "sandwich",
-    "x"         : 434,
+    "x"         : 394,
     "y"         : 642,
     "priceMin"  : 2.5,
     "priceMax"  : 5,
@@ -60,7 +60,7 @@ var restos =
   {
     "name"      : "Le Goulu",
     "image"     : "homard",
-    "x"         : 326,
+    "x"         : 386,
     "y"         : 78,
     "priceMin"  : 18,
     "priceMax"  : 38,
@@ -73,7 +73,7 @@ var restos =
   {
     "name"      : "Chez Yvette",
     "image"     : "raclette",
-    "x"         : 452,
+    "x"         : 412,
     "y"         : 23,
     "priceMin"  : 0,
     "priceMax"  : 0,
@@ -86,23 +86,23 @@ var restos =
   {
     "name"      : "Les Délices de Champollion",
     "image"     : "sandwich",
-    "x"         : 472,
+    "x"         : 432,
     "y"         : 514,
     "priceMin"  : 4,
     "priceMax"  : 8,
     "food"      : [
-      "sandwich"
+      "Sandwich"
     ]
   },
   {
     "name"      : "Nicouleau",
     "image"     : "sandwich",
-    "x"         : 743,
+    "x"         : 703,
     "y"         : 307,
     "priceMin"  : 4,
     "priceMax"  : 8,
     "food"      : [
-      "sandwich"
+      "Sandwich"
     ]
   }
 ]

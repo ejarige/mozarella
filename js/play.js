@@ -14,7 +14,7 @@ var playState = {
 	},
 	
 	Character: function(manager, x, y) {
-		this.sprite = game.add.sprite(x, y, 'pizza');
+		this.sprite = game.add.sprite(x, y, 'star');
 		game.physics.enable(this.sprite, Phaser.Physics.ARCADE);
 		this.sprite.inputEnabled = true;
 		this.sprite.anchor.setTo(0.5, 0.75);
@@ -57,12 +57,12 @@ var playState = {
 	
 	create: function() {
 		//disable context menu (for right clicks)
-		game.canvas.oncontextmenu = function (e) { e.preventDefault(); }		
+		game.canvas.oncontextmenu = function (e) { e.preventDefault(); };
 		
 		game.add.image(0, 0, 'map');
 
 		for(var r in restos){
-			game.add.sprite(restos[r].x, restos[r].y, restos[r].image);
+			game.add.sprite(restos[r].x, restos[r].y, restos[r].image).anchor.setTo(0.5, 0.5);
 		}
 
 		var pnj = getPnj();
