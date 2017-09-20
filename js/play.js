@@ -31,6 +31,8 @@ var playState = {
 		game.physics.enable(this.sprite, Phaser.Physics.ARCADE);
 		this.sprite.inputEnabled = true;
 		this.sprite.anchor.setTo(0.5, 0.75);
+
+		this.request = getPnj();
 		
 		//path
 		this.pathIndex = 0;
@@ -46,6 +48,7 @@ var playState = {
 				if (!this.isSelected) {
                     manager.selectCharacter(this);
                     this.isSelected = true;
+                    console.log(this.request);
                 }
                 else {
 					manager.unselectCharacter();
@@ -75,12 +78,12 @@ var playState = {
 		this.sprite.events.onInputDown.add(this.onDown, this);
 
 		this.onOver = function () {
-			console.log("open restaurant infos")
+			//console.log("open restaurant infos")
 		};
         this.sprite.events.onInputOver.add(this.onOver, this);
 
         this.onOut = function () {
-            console.log("close restaurant infos")
+            //console.log("close restaurant infos")
         };
         this.sprite.events.onInputOut.add(this.onOut, this);
 	},
@@ -117,15 +120,15 @@ var playState = {
 	update: function() {
 		//character selection
 		if (this.selectionManager.selectedCharacter == null) {
-			console.log("a");
+			//console.log("a");
 		}
 		//restaurant selection
 		else {
 			if (this.selectionManager.selectedRestaurant == null) {
-				console.log("b");
+				//console.log("b");
 			}
 			else {
-				console.log('c');
+				//console.log('c');
 				this.movingCharacters.push([this.selectionManager.selectedCharacter, this.selectionManager.selectedRestaurant]);
 				this.selectionManager.unselectAll();
 			}
@@ -143,11 +146,15 @@ var playState = {
 
 	moveCharacters: function() {
 		for(var c in this.movingCharacters) {
-            this.moveCharacter(this.movingCharacters[c][0], this.getPath(this.movingCharacters[c][1]));
+            this.moveCharacter(c, false);
 		}
 	},
 
-	moveCharacter: function(character, path) {
+	//goBack = true if the character is going back after a mistake
+	moveCharacter: function(index, goBack) {
+		var character = this.movingCharacters[index][0];
+		var restaurant = this.movingCharacters[index][1];
+		var path = this.getPath(restaurant);
 		if (character.pathIndex < path.length) {
 			game.physics.arcade.moveToXY(character.sprite, path[character.pathIndex].x, path[character.pathIndex].y, character.speed);
 			if (game.physics.arcade.distanceToXY(character.sprite, path[character.pathIndex].x, path[character.pathIndex].y) < 8) {
@@ -157,12 +164,27 @@ var playState = {
 		else {
 			character.sprite.body.velocity.x = 0;
 			character.sprite.body.velocity.y = 0;
-			this.killCharacter(character);
+			console.log(this.checkRestaurant(index));
 		}
 	},
+
+	//checks whether the restaurant the character's arrived at is one that fulfills his request
+	checkRestaurant: function(index) {
+		var character = this.movingCharacters[index][0];
+		var restaurant = this.movingCharacters[index][1];
+		for (var i=0; i<character.request.results.length; i++) {
+			if (character.request.results[i] == restaurant.obj) {
+                this.killCharacter(index);
+                return true;
+			}
+		}
+		return false;
+	},
 	
-	killCharacter: function(character) {
+	killCharacter: function(index) {
+        var character = this.movingCharacters[index][0];
         character.sprite.kill();
+        delete this.movingCharacters[index];
 		character = null;
 	},
 };
