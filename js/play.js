@@ -42,7 +42,16 @@ var playState = {
 
 		this.isSelected = false;
 		this.isMoving = false;
-		
+		this.isGoingBack = false;
+
+		this.goBack = function() {
+		    this.isGoingBack = true;
+        };
+
+		this.unselect = function() {
+		    this.isSelected = false;
+        };
+
 		this.onDown = function() {
 			if (game.input.activePointer.leftButton.isDown && !this.isMoving) {
 				if (!this.isSelected) {
@@ -52,6 +61,7 @@ var playState = {
                 }
                 else {
 					manager.unselectCharacter();
+					this.isSelected = false;
 				}
 			}
 		};
@@ -146,7 +156,7 @@ var playState = {
 
 	moveCharacters: function() {
 		for(var c in this.movingCharacters) {
-            this.moveCharacter(c, false);
+            this.moveCharacter(c, this.movingCharacters[c][0].isGoingBack);
 		}
 	},
 
@@ -155,17 +165,35 @@ var playState = {
 		var character = this.movingCharacters[index][0];
 		var restaurant = this.movingCharacters[index][1];
 		var path = this.getPath(restaurant);
-		if (character.pathIndex < path.length) {
-			game.physics.arcade.moveToXY(character.sprite, path[character.pathIndex].x, path[character.pathIndex].y, character.speed);
-			if (game.physics.arcade.distanceToXY(character.sprite, path[character.pathIndex].x, path[character.pathIndex].y) < 8) {
-				character.pathIndex++;
-			}
-		}
-		else {
-			character.sprite.body.velocity.x = 0;
-			character.sprite.body.velocity.y = 0;
-			console.log(this.checkRestaurant(index));
-		}
+		//from uni to restaurant
+		if (!goBack) {
+            if (character.pathIndex < path.length-1) {
+                game.physics.arcade.moveToXY(character.sprite, path[character.pathIndex].x, path[character.pathIndex].y, character.speed);
+                if (game.physics.arcade.distanceToXY(character.sprite, path[character.pathIndex].x, path[character.pathIndex].y) < 8) {
+                    character.pathIndex++;
+                }
+            }
+            else {
+                character.sprite.body.velocity.x = 0;
+                character.sprite.body.velocity.y = 0;
+                this.checkRestaurant(index);
+            }
+        }
+        //from restaurant to uni
+        else {
+            if (character.pathIndex > 0) {
+                game.physics.arcade.moveToXY(character.sprite, path[character.pathIndex].x, path[character.pathIndex].y, character.speed);
+                if (game.physics.arcade.distanceToXY(character.sprite, path[character.pathIndex].x, path[character.pathIndex].y) < 8) {
+                    character.pathIndex--;
+                }
+            }
+            else {
+                character.sprite.body.velocity.x = 0;
+                character.sprite.body.velocity.y = 0;
+                this.movingCharacters[index][0].unselect();
+                delete this.movingCharacters[index];
+            }
+        }
 	},
 
 	//checks whether the restaurant the character's arrived at is one that fulfills his request
@@ -174,11 +202,13 @@ var playState = {
 		var restaurant = this.movingCharacters[index][1];
 		for (var i=0; i<character.request.results.length; i++) {
 			if (character.request.results[i] == restaurant.obj) {
+			    //right restaurant
                 this.killCharacter(index);
-                return true;
+                return;
 			}
 		}
-		return false;
+		//wrong restaurant
+        this.movingCharacters[index][0].goBack();
 	},
 	
 	killCharacter: function(index) {
