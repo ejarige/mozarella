@@ -63,7 +63,7 @@ var restos =
     "x"         : 394,
     "y"         : 642,
     "priceMin"  : 2.5,
-    "priceMax"  : 5,
+    "priceMax"  : 6,
     "food"      : [
       "Sanwhich",
       "Steak frites"

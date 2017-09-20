@@ -1,3 +1,4 @@
+var CORDOVA = true;
 var game = new Phaser.Game(1088, 770, Phaser.AUTO, 'gameDiv');
 
 game.state.add('boot', bootState);

@@ -1,3 +1,5 @@
+var tipsy;
+
 var playState = {
 	SelectionManager: function() {
 		this.selectedCharacter = null;
@@ -35,7 +37,7 @@ var playState = {
 		this.isMoving = false;
 		
 		this.onDown = function() {
-			if (game.input.activePointer.leftButton.isDown && !this.isMoving) {
+			if ((game.input.pointer1.isDown || game.input.activePointer.leftButton.isDown) && !this.isMoving) {
 				manager.selectCharacter(this);
 			}
 		};
@@ -52,11 +54,17 @@ var playState = {
 
 		this.isSelected = false;
 
+		this.showInfo = function(){
+			tipsy = game.add.sprite('');
+		};
+
 		this.onDown = function () {
-			if (game.input.activePointer.leftButton.isDown && manager.selectedCharacter != null) {
+			if ((game.input.pointer1.isDown || game.input.activePointer.leftButton.isDown) && manager.selectedCharacter != null) {
 				//move NPC to restaurant
 				this.isSelected = true;
 				manager.selectRestaurant(this);
+			} else {
+				this.showInfo();
 			}
 		};
 
@@ -70,7 +78,7 @@ var playState = {
 	create: function() {
 		//disable context menu (for right clicks)
 		game.canvas.oncontextmenu = function (e) { e.preventDefault(); };
-		
+
 		game.add.image(0, 0, 'map');
 
 		game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -85,13 +93,13 @@ var playState = {
 		for(var r in restos){
 			restos[r].obj = new this.Restaurant(this.selectionManager, restos[r]);
 		}
-		
+
 		this.npc_test0 = new this.Character(this.selectionManager, 300, 650);
 		this.npc_test1 = new this.Character(this.selectionManager, 300, 650);
 
 		game.input.mouse.capture = true;
 	},
-	
+
 	update: function() {
 		//character selection
 		if (this.selectionManager.selectedCharacter == null) {
@@ -139,7 +147,7 @@ var playState = {
 			this.killCharacter(character);
 		}
 	},
-	
+
 	killCharacter: function(character) {
         character.sprite.kill();
 		character = null;

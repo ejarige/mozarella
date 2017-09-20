@@ -4,6 +4,14 @@ var titleState = {
 		
 		var wkey = game.input.keyboard.addKey(Phaser.Keyboard.W);
 		wkey.onDown.addOnce(this.start, this);
+
+		game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
+
+		if(CORDOVA){
+			game.input.onDown.add(function(){game.scale.startFullScreen(false)}, this);
+		} else {
+			game.input.keyboard.addKey(Phaser.Keyboard.ENTER).onDown.add(gofull, this);
+		}
 	},
 	
 	start: function() {
