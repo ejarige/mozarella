@@ -9,9 +9,15 @@ var playState = {
 		this.selectRestaurant = function(restaurant) {
 			this.selectedRestaurant = restaurant;
 		};
-		this.unselectAll = function() {
-			this.selectedCharacter = null;
+		this.unselectCharacter = function() {
+            this.selectedCharacter = null;
+		};
+		this.unselectRestaurant = function() {
 			this.selectedRestaurant = null;
+		};
+		this.unselectAll = function() {
+    		this.selectedCharacter = null;
+    		this.selectedRestaurant = null;
 		};
 
 		this.onRightDown = function() {
@@ -32,11 +38,18 @@ var playState = {
 		//speed
 		this.speed = 200;
 
+		this.isSelected = false;
 		this.isMoving = false;
 		
 		this.onDown = function() {
 			if (game.input.activePointer.leftButton.isDown && !this.isMoving) {
-				manager.selectCharacter(this);
+				if (!this.isSelected) {
+                    manager.selectCharacter(this);
+                    this.isSelected = true;
+                }
+                else {
+					manager.unselectCharacter();
+				}
 			}
 		};
 		this.sprite.events.onInputDown.add(this.onDown, this);
@@ -59,8 +72,17 @@ var playState = {
 				manager.selectRestaurant(this);
 			}
 		};
-
 		this.sprite.events.onInputDown.add(this.onDown, this);
+
+		this.onOver = function () {
+			console.log("open restaurant infos")
+		};
+        this.sprite.events.onInputOver.add(this.onOver, this);
+
+        this.onOut = function () {
+            console.log("close restaurant infos")
+        };
+        this.sprite.events.onInputOut.add(this.onOut, this);
 	},
 
 	preload: function() {
@@ -113,7 +135,6 @@ var playState = {
 
 	//return path leading to selected restaurant
 	getPath: function(restaurant) {
-		//temp test
 		var path = [];
 		for(var p in restaurant.obj.path)
 			path.push(new Phaser.Point(restaurant.obj.path[p][0], restaurant.obj.path[p][1]));
