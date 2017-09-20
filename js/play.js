@@ -9,6 +9,10 @@ var playState = {
 		this.selectRestaurant = function(restaurant) {
 			this.selectedRestaurant = restaurant;
 		};
+		this.unselectAll = function() {
+			this.selectedCharacter = null;
+			this.selectedRestaurant = null;
+		};
 
 		this.onRightDown = function() {
 			this.selectedCharacter = null;
@@ -74,18 +78,16 @@ var playState = {
 		//singleton manager
 		this.selectionManager = new this.SelectionManager();
 
+		//all characters currently moving
+		this.movingCharacters = [];
+
 		//create restaurants
 		for(var r in restos){
 			restos[r].obj = new this.Restaurant(this.selectionManager, restos[r]);
 		}
 		
-		this.npc_test = new this.Character(this.selectionManager, 300, 650);
-		this.npc_test = new this.Character(this.selectionManager, 300, 650);
-		this.npc_test = new this.Character(this.selectionManager, 300, 650);
-		this.npc_test = new this.Character(this.selectionManager, 300, 650);
-		this.npc_test = new this.Character(this.selectionManager, 300, 650);
-		this.npc_test = new this.Character(this.selectionManager, 300, 650);
-		this.npc_test = new this.Character(this.selectionManager, 300, 650);
+		this.npc_test0 = new this.Character(this.selectionManager, 300, 650);
+		this.npc_test1 = new this.Character(this.selectionManager, 300, 650);
 
 		game.input.mouse.capture = true;
 	},
@@ -102,9 +104,11 @@ var playState = {
 			}
 			else {
 				console.log('c');
-				this.moveCharacter(this.selectionManager.selectedCharacter, this.getPath(this.selectionManager.selectedRestaurant));
+				this.movingCharacters.push([this.selectionManager.selectedCharacter, this.selectionManager.selectedRestaurant]);
+				this.selectionManager.unselectAll();
 			}
 		}
+		this.moveCharacters();
 	},
 
 	//return path leading to selected restaurant
@@ -113,10 +117,15 @@ var playState = {
 		var path = [];
 		for(var p in restaurant.obj.path)
 			path.push(new Phaser.Point(restaurant.obj.path[p][0], restaurant.obj.path[p][1]));
-
 		return path;
 	},
-	
+
+	moveCharacters: function() {
+		for(var c in this.movingCharacters) {
+            this.moveCharacter(this.movingCharacters[c][0], this.getPath(this.movingCharacters[c][1]));
+		}
+	},
+
 	moveCharacter: function(character, path) {
 		if (character.pathIndex < path.length) {
 			game.physics.arcade.moveToXY(character.sprite, path[character.pathIndex].x, path[character.pathIndex].y, character.speed);
@@ -127,9 +136,12 @@ var playState = {
 		else {
 			character.sprite.body.velocity.x = 0;
 			character.sprite.body.velocity.y = 0;
-			character.sprite.kill();
+			this.killCharacter(character);
 		}
 	},
 	
-	
+	killCharacter: function(character) {
+        character.sprite.kill();
+		character = null;
+	},
 };
