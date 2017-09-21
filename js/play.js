@@ -48,6 +48,10 @@ var playState = {
 		    this.isGoingBack = true;
         };
 
+		this.stopGoingBack = function() {
+			this.isGoingBack = false;
+		};
+
 		this.unselect = function() {
 		    this.isSelected = false;
         };
@@ -181,7 +185,7 @@ var playState = {
         }
         //from restaurant to uni
         else {
-            if (character.pathIndex > 0) {
+            if (character.pathIndex >= 0) {
                 game.physics.arcade.moveToXY(character.sprite, path[character.pathIndex].x, path[character.pathIndex].y, character.speed);
                 if (game.physics.arcade.distanceToXY(character.sprite, path[character.pathIndex].x, path[character.pathIndex].y) < 8) {
                     character.pathIndex--;
@@ -190,6 +194,8 @@ var playState = {
             else {
                 character.sprite.body.velocity.x = 0;
                 character.sprite.body.velocity.y = 0;
+                character.pathIndex = 0;
+                this.movingCharacters[index][0].stopGoingBack();
                 this.movingCharacters[index][0].unselect();
                 delete this.movingCharacters[index];
             }
