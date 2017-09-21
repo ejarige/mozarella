@@ -161,6 +161,7 @@ var playState = {
         this.timerLabel = game.add.text(960, 32, this.formatTime(this.TIMER_MINUTES*60+this.TIMER_SECONDS), {font: "48px Arial", fill: "#fff"});
 
         this.score = 0;
+        this.scoreLabel = game.add.text(32, 32, 'Score : 0', {font: "48px Arial", fill: "#fff"});
 		
 		this.npc_test0 = new this.Character(this.selectionManager, 300, 650);
 		this.npc_test1 = new this.Character(this.selectionManager, 300, 650);
@@ -188,6 +189,12 @@ var playState = {
 
         playState.timerLabel.text = this.formatTime(Math.round((playState.timerEvent.delay - playState.timer.ms) / 1000));
 	},
+
+    modScore: function(modifier) {
+        playState.score += modifier;
+        if (playState.score < 0) { playState.score = 0; }
+        playState.scoreLabel.text = 'Score : ' + playState.score;
+    },
 
 	endTimer: function(timer) {
 		timer.stop();
@@ -281,11 +288,13 @@ var playState = {
 		for (var i=0; i<character.request.results.length; i++) {
 			if (character.request.results[i] == restaurant.obj) {
 			    //right restaurant
+                this.modScore(100);
                 this.killCharacter(index);
                 return;
 			}
 		}
 		//wrong restaurant
+        this.modScore(-50);
         this.movingCharacters[index][0].goBack();
 	},
 
