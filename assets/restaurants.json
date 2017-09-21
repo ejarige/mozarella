@@ -3,8 +3,8 @@ var restos =
   {
     "name"    : "L'Azzuro",
     "image"   : "pizza",
-    "x"       : 603,
-    "y"       : 406,
+    "x"       : 645,
+    "y"       : 398,
     "priceMin": 12,
     "priceMax": 16,
     "food"    : [
@@ -17,8 +17,8 @@ var restos =
   {
     "name"      : "La Boîte à Pizza",
     "image"     : "pizza",
-    "x"         : 600,
-    "y"         : 557,
+    "x"         : 638,
+    "y"         : 552,
     "priceMin"  : 8,
     "priceMax"  : 15,
     "food"      : [
@@ -31,7 +31,7 @@ var restos =
   {
     "name"      : "Halal Martil",
     "image"     : "kebab",
-    "x"         : 518,
+    "x"         : 558,
     "y"         : 449,
     "priceMin"  : 5,
     "priceMax"  : 10,
@@ -46,8 +46,8 @@ var restos =
   {
     "name"      : "Le Pékin",
     "image"     : "chinois",
-    "x"         : 858,
-    "y"         : 532,
+    "x"         : 896,
+    "y"         : 520,
     "priceMin"  : 7,
     "priceMax"  : 12,
     "food"      : [
@@ -60,7 +60,7 @@ var restos =
   {
     "name"      : "Restaurant universitaire + cafétaria",
     "image"     : "sandwich",
-    "x"         : 394,
+    "x"         : 430,
     "y"         : 642,
     "priceMin"  : 2.5,
     "priceMax"  : 6,
@@ -75,8 +75,8 @@ var restos =
   {
     "name"      : "Le Goulu",
     "image"     : "homard",
-    "x"         : 386,
-    "y"         : 78,
+    "x"         : 329,
+    "y"         : 74,
     "priceMin"  : 18,
     "priceMax"  : 38,
     "food"      : [
@@ -91,8 +91,8 @@ var restos =
   {
     "name"      : "Chez Yvette",
     "image"     : "raclette",
-    "x"         : 412,
-    "y"         : 23,
+    "x"         : 444,
+    "y"         : 28,
     "priceMin"  : 0,
     "priceMax"  : 0,
     "food"      : [
@@ -107,8 +107,8 @@ var restos =
   {
     "name"      : "Les Délices de Champollion",
     "image"     : "sandwich",
-    "x"         : 432,
-    "y"         : 514,
+    "x"         : 472,
+    "y"         : 518,
     "priceMin"  : 4,
     "priceMax"  : 8,
     "food"      : [
@@ -121,8 +121,8 @@ var restos =
   {
     "name"      : "Nicouleau",
     "image"     : "sandwich",
-    "x"         : 703,
-    "y"         : 307,
+    "x"         : 766,
+    "y"         : 308,
     "priceMin"  : 4,
     "priceMax"  : 8,
     "food"      : [
