@@ -133,7 +133,17 @@ var playState = {
 		for(var r in restos){
 			restos[r].obj = new this.Restaurant(this.selectionManager, restos[r]);
 		}
-		
+
+		this.TIMER_MINUTES = 2;
+		this.TIMER_SECONDS = 0;
+
+		this.timer = game.time.create();
+		this.timerEvent = this.timer.add(Phaser.Timer.MINUTE * this.TIMER_MINUTES + Phaser.Timer.SECOND * this.TIMER_SECONDS, this.endTimer(this.timer), this);
+		this.timer.start();
+        this.timerLabel = game.add.text(960, 32, this.formatTime(this.TIMER_MINUTES*60+this.TIMER_SECONDS), {font: "48px Arial", fill: "#fff"});
+
+        this.score = 0;
+
 		this.npc_test0 = new this.Character(this.selectionManager, 300, 650);
 		this.npc_test1 = new this.Character(this.selectionManager, 300, 650);
 
@@ -157,7 +167,20 @@ var playState = {
 			}
 		}
 		this.moveCharacters();
+
+        playState.timerLabel.text = this.formatTime(Math.round((playState.timerEvent.delay - playState.timer.ms) / 1000));
 	},
+
+	endTimer: function(timer) {
+		timer.stop();
+	},
+
+	formatTime: function(time) {
+        var minutes = Math.floor(time / 60);
+        var seconds = time - minutes * 60;
+        if (seconds < 10) { seconds = '0' + seconds; }
+        return minutes + ":" + seconds;
+    },
 
 	//return path leading to selected restaurant
 	getPath: function(restaurant) {
