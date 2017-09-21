@@ -1,6 +1,10 @@
 var tipsy;
 
+var MAX_WAITING = 5;
+var WAITING = [];
+
 var playState = {
+
 	SelectionManager: function() {
 		this.selectedCharacter = null;
 		this.selectedRestaurant = null;
@@ -28,11 +32,25 @@ var playState = {
 		game.input.activePointer.rightButton.onDown.add(this.onRightDown, this);
 	},
 	
-	Character: function(manager, x, y) {
-		this.sprite = game.add.sprite(x, y, 'star');
-		game.physics.enable(this.sprite, Phaser.Physics.ARCADE);
+	Character: function(manager) {
+		this.id = Date.now();
+
+		this.x = getRand(199,416);
+		this.y = getRand(608,650);
+
+		this.sprite = game.add.sprite(this.x, this.y, 'pnj-'+getRand(1,NB_PNJ));
+
+		this.sprite.animations.add('left', [0,1,2], 10, true);
+		this.sprite.animations.add('down', [3,4,5], 10, true);
+		this.sprite.animations.add('right', [6,7,8], 10, true);
+		this.sprite.animations.add('up', [9,10,11], 10, true);
+
+		this.sprite.play('down');
+
 		this.sprite.inputEnabled = true;
 		this.sprite.anchor.setTo(0.5, 0.75);
+
+		game.physics.enable(this.sprite, Phaser.Physics.ARCADE);
 
 		this.request = getPnj();
 
@@ -133,9 +151,9 @@ var playState = {
 		for(var r in restos){
 			restos[r].obj = new this.Restaurant(this.selectionManager, restos[r]);
 		}
-		
-		this.npc_test0 = new this.Character(this.selectionManager, 300, 650);
-		this.npc_test1 = new this.Character(this.selectionManager, 300, 650);
+
+		for(var i=0;i<MAX_WAITING;i++)
+			WAITING = new this.Character(this.selectionManager);
 
 		game.input.mouse.capture = true;
 	},
@@ -179,6 +197,26 @@ var playState = {
 		var character = this.movingCharacters[index][0];
 		var restaurant = this.movingCharacters[index][1];
 		var path = this.getPath(restaurant);
+		if(goBack)
+			path.unshift(new Phaser.Point(character.x,character.y));
+
+		// get animation direction
+		var isLeft = character.sprite.body.velocity.x < 0;
+		var isDown = character.sprite.body.velocity.y > 0;
+		var isVertical = Math.abs(character.sprite.body.velocity.x) - Math.abs(character.sprite.body.velocity.y) < 0;
+
+		if(isVertical){
+			if(isDown)
+				character.sprite.play('down');
+			else
+				character.sprite.play('up');
+		} else{
+			if(isLeft)
+				character.sprite.play('left');
+			else
+				character.sprite.play('right');
+		}
+
 		//from uni to restaurant
 		if (!goBack) {
             if (character.pathIndex < path.length-1) {
@@ -193,6 +231,7 @@ var playState = {
                 this.checkRestaurant(index);
             }
         }
+
         //from restaurant to uni
         else {
             if (character.pathIndex >= 0) {
@@ -202,6 +241,7 @@ var playState = {
                 }
             }
             else {
+				character.sprite.play('down');
                 character.sprite.body.velocity.x = 0;
                 character.sprite.body.velocity.y = 0;
                 character.pathIndex = 0;
