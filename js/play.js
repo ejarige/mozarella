@@ -1,3 +1,5 @@
+var tipsy;
+
 var playState = {
 	SelectionManager: function() {
 		this.selectedCharacter = null;
@@ -33,7 +35,7 @@ var playState = {
 		this.sprite.anchor.setTo(0.5, 0.75);
 
 		this.request = getPnj();
-		
+
 		//path
 		this.pathIndex = 0;
 		
@@ -82,13 +84,20 @@ var playState = {
 
 		this.isSelected = false;
 
+		this.showInfo = function(){
+			tipsy = game.add.sprite('');
+		};
+
 		this.onDown = function () {
-			if (game.input.activePointer.leftButton.isDown && manager.selectedCharacter != null) {
+			if ((game.input.pointer1.isDown || game.input.activePointer.leftButton.isDown) && manager.selectedCharacter != null) {
 				//move NPC to restaurant
 				this.isSelected = true;
 				manager.selectRestaurant(this);
+			} else {
+				this.showInfo();
 			}
 		};
+
 		this.sprite.events.onInputDown.add(this.onDown, this);
 
 		this.onOver = function () {
@@ -152,6 +161,7 @@ var playState = {
 
 	//return path leading to selected restaurant
 	getPath: function(restaurant) {
+		//temp test
 		var path = [];
 		for(var p in restaurant.obj.path)
 			path.push(new Phaser.Point(restaurant.obj.path[p][0], restaurant.obj.path[p][1]));
@@ -216,7 +226,7 @@ var playState = {
 		//wrong restaurant
         this.movingCharacters[index][0].goBack();
 	},
-	
+
 	killCharacter: function(index) {
         var character = this.movingCharacters[index][0];
         character.sprite.kill();

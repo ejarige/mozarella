@@ -84,3 +84,16 @@ function getPnj(){
 function getRand(min, max){
     return Math.floor(Math.random() * (max+1 - min) + min);
 }
+
+function gofull() {
+
+    if (game.scale.isFullScreen)
+    {
+        game.scale.stopFullScreen();
+    }
+    else
+    {
+        game.scale.startFullScreen(false);
+    }
+
+}
