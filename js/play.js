@@ -130,19 +130,58 @@ var playState = {
 	},
 	
 	Restaurant: function(manager, resto) {
+		this.x = resto.x;
+		this.y = resto.y;
+
 		this.obj = resto;
-		this.sprite = game.add.sprite(resto.x, resto.y, resto.image);
+		this.sprite = game.add.sprite(this.x, this.y, resto.image);
 
 		this.sprite.anchor.setTo(0.5, 0.5);
 		game.physics.enable(this.sprite, Phaser.Physics.ARCADE);
 		this.sprite.inputEnabled = true;
 		this.sprite.input.useHandCursor = true;
 
+		// info -->
+
+		this.info = game.add.sprite(this.x-30, this.y-85, 'bulle_resto');
+		this.info.anchor.setTo(.5,.5);
+
+		this.name = game.add.text(this.info.x-60, this.info.y-50, resto.name, {font: "12px Arial", fontWeight: 'bold', fill:"red"});
+
+		if(this.y < 250){
+			this.info.position.x += 60;
+			this.info.position.y += 170;
+			this.info.angle = 180;
+
+			this.name.position.x += 60;
+			this.name.position.y += 190;
+		}
+
+		this.prixMin = game.add.text(this.name.x, this.name.y+18, 'Prix min : '+resto.priceMin+'€', {font: "12px Arial"});
+		this.prixMax = game.add.text(this.name.x, this.name.y+36, 'Prix max : '+resto.priceMax+'€', {font: "12px Arial"});
+
+		this.food = [];
+		for(var i=0;i<resto.food.length;i++){
+			var food = game.add.sprite(this.name.x+i*40, this.name.y+50, resto.food[i]+'_bulle');
+			food.scale.setTo(.75,.75);
+			this.food.push(food);
+		}
+
+
+		// <-- info
+
 		this.isSelected = false;
 
-		this.showInfo = function(){
-			tipsy = game.add.sprite('');
+		this.toggleInfo = function(){
+			this.info.alpha = !this.info.alpha;
+			this.name.alpha = !this.name.alpha;
+			this.prixMin.alpha = !this.prixMin.alpha;
+			this.prixMax.alpha = !this.prixMax.alpha;
+
+			for(var f in this.food)
+				this.food[f].alpha = !this.food[f].alpha;
 		};
+		this.toggleInfo();
 
 		this.onDown = function () {
 			if ((game.input.pointer1.isDown || game.input.activePointer.leftButton.isDown) && manager.selectedCharacter != null) {
@@ -157,12 +196,12 @@ var playState = {
 		this.sprite.events.onInputDown.add(this.onDown, this);
 
 		this.onOver = function () {
-			//console.log("open restaurant infos")
+			this.toggleInfo();
 		};
         this.sprite.events.onInputOver.add(this.onOver, this);
 
         this.onOut = function () {
-            //console.log("close restaurant infos")
+			this.toggleInfo();
         };
         this.sprite.events.onInputOut.add(this.onOut, this);
 	},
