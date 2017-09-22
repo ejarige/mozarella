@@ -55,15 +55,25 @@ var playState = {
 
 		this.info = game.add.sprite(this.x, this.y-62, 'bulle_pnj');
 		this.info.anchor.setTo(.5,.5);
+		//test
+		this.sprite.addChild(this.info);
+		this.info.x = 0;
+		this.info.y = -62;
 
 		if(this.request.price){
 			this.price = game.add.text(this.info.position.x, this.info.position.y+5, this.request.price+'€', {font: "24px Arial", fontWeight: 'bold', fill: "green"})
 			this.price.anchor.setTo(.5,.5);
+			this.info.addChild(this.price);
+			this.price.x = 0;
+			this.price.y = 5;
 		}
 
 		if(this.request.food){
 			this.food = game.add.sprite(this.info.position.x, this.info.position.y, this.request.food+'_bulle');
 			this.food.anchor.setTo(.5,.5);
+			this.info.addChild(this.food);
+			this.food.x = 0;
+			this.food.y = 0;
 		}
 
 		if(this.price && this.food){
