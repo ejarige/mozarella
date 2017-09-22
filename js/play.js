@@ -154,6 +154,7 @@ var playState = {
 
         this.TIMER_MINUTES = 2;
         this.TIMER_SECONDS = 0;
+        this.SCORE_BONUS = 100;
 
         this.timer = game.time.create();
         this.timerEvent = this.timer.add(Phaser.Timer.MINUTE * this.TIMER_MINUTES + Phaser.Timer.SECOND * this.TIMER_SECONDS, this.endTimer(this.timer), this);
@@ -249,9 +250,9 @@ var playState = {
 
 		//from uni to restaurant
 		if (!goBack) {
-            if (character.pathIndex < path.length-1) {
+            if (character.pathIndex <= path.length-1) {
                 game.physics.arcade.moveToXY(character.sprite, path[character.pathIndex].x, path[character.pathIndex].y, character.speed);
-                if (game.physics.arcade.distanceToXY(character.sprite, path[character.pathIndex].x, path[character.pathIndex].y) < 8) {
+                if (game.physics.arcade.distanceToXY(character.sprite, path[character.pathIndex].x, path[character.pathIndex].y) < 4) {
                     character.pathIndex++;
                 }
             }
@@ -266,7 +267,7 @@ var playState = {
         else {
             if (character.pathIndex >= 0) {
                 game.physics.arcade.moveToXY(character.sprite, path[character.pathIndex].x, path[character.pathIndex].y, character.speed);
-                if (game.physics.arcade.distanceToXY(character.sprite, path[character.pathIndex].x, path[character.pathIndex].y) < 8) {
+                if (game.physics.arcade.distanceToXY(character.sprite, path[character.pathIndex].x, path[character.pathIndex].y) < 4) {
                     character.pathIndex--;
                 }
             }
@@ -281,14 +282,14 @@ var playState = {
         }
 	},
 
-	//checks whether the restaurant the character's arrived at is one that fulfills his request
+	//checks whether the restaurant the character's arrived at is one that fulfills his request & acts accordingly
 	checkRestaurant: function(index) {
 		var character = this.movingCharacters[index][0];
 		var restaurant = this.movingCharacters[index][1];
 		for (var i=0; i<character.request.results.length; i++) {
 			if (character.request.results[i] == restaurant.obj) {
 			    //right restaurant
-                this.modScore(100);
+                this.modScore(playState.SCORE_BONUS);
                 this.killCharacter(index);
                 return;
 			}
