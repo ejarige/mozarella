@@ -152,20 +152,28 @@ var playState = {
 			restos[r].obj = new this.Restaurant(this.selectionManager, restos[r]);
 		}
 
+		//CONSTANTS
         this.TIMER_MINUTES = 2;
         this.TIMER_SECONDS = 0;
+        this.SPAWN_TIME = 10; //in seconds
         this.SCORE_BONUS = 100;
+        this.NB_STARTING_CHARACTERS = 3;
 
+        //spawn characters timer
+        game.time.events.loop(Phaser.Timer.SECOND * this.SPAWN_TIME, this.spawnCharacter, this);
+
+        //game over timer
         this.timer = game.time.create();
-        this.timerEvent = this.timer.add(Phaser.Timer.MINUTE * this.TIMER_MINUTES + Phaser.Timer.SECOND * this.TIMER_SECONDS, this.endTimer(this.timer), this);
+        this.timerEvent = this.timer.add(Phaser.Timer.MINUTE * this.TIMER_MINUTES + Phaser.Timer.SECOND * this.TIMER_SECONDS, this.endTimer, this);
         this.timer.start();
         this.timerLabel = game.add.text(960, 32, this.formatTime(this.TIMER_MINUTES*60+this.TIMER_SECONDS), {font: "48px Arial", fill: "#fff"});
 
+        //score
         this.score = 0;
         this.scoreLabel = game.add.text(32, 32, 'Score : 0', {font: "48px Arial", fill: "#fff"});
-		
-		this.npc_test0 = new this.Character(this.selectionManager, 300, 650);
-		this.npc_test1 = new this.Character(this.selectionManager, 300, 650);
+
+        //spawn starting characterss
+		this.spawnStartingCharacters();
 
 		game.input.mouse.capture = true;
 	},
@@ -197,8 +205,8 @@ var playState = {
         playState.scoreLabel.text = 'Score : ' + playState.score;
     },
 
-	endTimer: function(timer) {
-		timer.stop();
+	endTimer: function() {
+		this.timer.stop();
 	},
 
 	formatTime: function(time) {
@@ -207,6 +215,17 @@ var playState = {
         if (seconds < 10) { seconds = '0' + seconds; }
         return minutes + ":" + seconds;
     },
+
+	spawnCharacter: function() {
+		new this.Character(this.selectionManager);
+	},
+
+	spawnStartingCharacters:function() {
+		for (var i = 0; i < this.NB_STARTING_CHARACTERS; i++) {
+			this.spawnCharacter();
+		}
+	},
+
 
 	//return path leading to selected restaurant
 	getPath: function(restaurant) {
