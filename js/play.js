@@ -35,6 +35,8 @@ var playState = {
 	Character: function(manager) {
 		this.id = Date.now();
 
+		this.request = getPnj();
+
 		this.x = getRand(199,416);
 		this.y = getRand(608,650);
 
@@ -50,9 +52,28 @@ var playState = {
 		this.sprite.inputEnabled = true;
 		this.sprite.anchor.setTo(0.5, 0.75);
 
-		game.physics.enable(this.sprite, Phaser.Physics.ARCADE);
+		this.info = game.add.sprite(this.x, this.y-62, 'bulle_pnj');
+		this.info.anchor.setTo(.5,.5);
 
-		this.request = getPnj();
+		if(this.request.price){
+			this.price = game.add.text(this.info.position.x, this.info.position.y+5, this.request.price+'€', {font: "24px Arial", fontWeight: 'bold', fill: "green"})
+			this.price.anchor.setTo(.5,.5);
+		}
+
+		if(this.request.food){
+			this.food = game.add.sprite(this.info.position.x, this.info.position.y, this.request.food+'_bulle');
+			this.food.anchor.setTo(.5,.5);
+		}
+
+		if(this.price && this.food){
+			this.food.position.x += 20;
+			this.food.scale.setTo(.75,.75);
+
+			this.price.position.x -= 10;
+			this.price.fontSize = 16;
+		}
+
+		game.physics.enable(this.sprite, Phaser.Physics.ARCADE);
 
 		//path
 		this.pathIndex = 0;
@@ -75,6 +96,14 @@ var playState = {
 		this.unselect = function() {
 		    this.isSelected = false;
         };
+
+		this.kill = function(){
+			if(this.food) this.food.kill();
+			if(this.price) this.price.kill();
+
+			this.info.kill();
+			this.sprite.kill();
+		};
 
 		this.onDown = function() {
 			if (game.input.activePointer.leftButton.isDown && !this.isMoving) {
@@ -293,6 +322,7 @@ var playState = {
             else {
                 character.sprite.body.velocity.x = 0;
                 character.sprite.body.velocity.y = 0;
+                character.sprite.play('down');
                 character.pathIndex = 0;
                 this.movingCharacters[index][0].stopGoingBack();
                 this.movingCharacters[index][0].unselect();
@@ -320,7 +350,7 @@ var playState = {
 
 	killCharacter: function(index) {
         var character = this.movingCharacters[index][0];
-        character.sprite.kill();
+        character.kill();
         delete this.movingCharacters[index];
 		character = null;
 	},
