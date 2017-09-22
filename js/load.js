@@ -1,4 +1,4 @@
-var NB_PNJ = 3;
+var NB_PNJ = 8;
 var loadState = {
 	preload: function() {
 		game.load.image('map', 'assets/map.png');
