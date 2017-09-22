@@ -50,6 +50,7 @@ var playState = {
 		this.sprite.play('down');
 
 		this.sprite.inputEnabled = true;
+		this.sprite.input.useHandCursor = true;
 		this.sprite.anchor.setTo(0.5, 0.75);
 
 		this.info = game.add.sprite(this.x, this.y-62, 'bulle_pnj');
@@ -105,6 +106,13 @@ var playState = {
 			this.sprite.kill();
 		};
 
+		this.toggleInfo = function(){
+			if(this.food) this.food.alpha = !this.food.alpha;
+			if(this.price) this.price.alpha = !this.price.alpha;
+
+			this.info.alpha = !this.info.alpha;
+		};
+
 		this.onDown = function() {
 			if (game.input.activePointer.leftButton.isDown && !this.isMoving) {
 				if (!this.isSelected) {
@@ -128,6 +136,7 @@ var playState = {
 		this.sprite.anchor.setTo(0.5, 0.5);
 		game.physics.enable(this.sprite, Phaser.Physics.ARCADE);
 		this.sprite.inputEnabled = true;
+		this.sprite.input.useHandCursor = true;
 
 		this.isSelected = false;
 
@@ -219,6 +228,7 @@ var playState = {
 			}
 			else {
 				//console.log('c');
+				this.selectionManager.selectedCharacter.toggleInfo();
 				this.movingCharacters.push([this.selectionManager.selectedCharacter, this.selectionManager.selectedRestaurant]);
 				this.selectionManager.unselectAll();
 			}
@@ -323,6 +333,7 @@ var playState = {
                 character.sprite.body.velocity.x = 0;
                 character.sprite.body.velocity.y = 0;
                 character.sprite.play('down');
+				character.toggleInfo();
                 character.pathIndex = 0;
                 this.movingCharacters[index][0].stopGoingBack();
                 this.movingCharacters[index][0].unselect();
