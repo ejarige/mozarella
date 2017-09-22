@@ -183,13 +183,14 @@ var playState = {
 		this.isSelected = false;
 
 		this.toggleInfo = function(){
-			this.info.alpha = !this.info.alpha;
-			this.name.alpha = !this.name.alpha;
-			this.prixMin.alpha = !this.prixMin.alpha;
-			this.prixMax.alpha = !this.prixMax.alpha;
+			this.info.alpha = !this.info.alpha; this.info.bringToTop();
+			this.name.alpha = !this.name.alpha; this.name.bringToTop();
+			this.prixMin.alpha = !this.prixMin.alpha; this.prixMin.bringToTop();
+			this.prixMax.alpha = !this.prixMax.alpha; this.prixMax.bringToTop();
 
-			for(var f in this.food)
-				this.food[f].alpha = !this.food[f].alpha;
+			for(var f in this.food){
+				this.food[f].alpha = !this.food[f].alpha; this.food[f].bringToTop();
+			}
 		};
 		this.toggleInfo();
 
@@ -198,8 +199,6 @@ var playState = {
 				//move NPC to restaurant
 				this.isSelected = true;
 				manager.selectRestaurant(this);
-			} else {
-				this.showInfo();
 			}
 		};
 
