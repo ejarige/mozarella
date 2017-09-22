@@ -231,12 +231,15 @@ var playState = {
 		//CONSTANTS
         this.TIMER_MINUTES = 2;
         this.TIMER_SECONDS = 0;
-        this.SPAWN_TIME = 10; //in seconds
         this.SCORE_BONUS = 100;
+        this.spawn_time = 7; //in seconds
         this.NB_STARTING_CHARACTERS = 3;
 
         //spawn characters timer
-        game.time.events.loop(Phaser.Timer.SECOND * this.SPAWN_TIME, this.spawnCharacter, this);
+        this.spawnTimer = game.time.events.loop(Phaser.Timer.SECOND * this.spawn_time, this.spawnCharacter, this);
+        /*this.spawnTimer = game.time.create();
+        this.spawnTimer = this.timer.add(Phaser.Timer.SECOND * this.spawn_time, this.spawnCharacter, this);
+        this.spawnTimer.start();*/
 
         //game over timer
         this.timer = game.time.create();
@@ -284,6 +287,7 @@ var playState = {
 
 	endTimer: function() {
 		this.timer.stop();
+        game.state.start('title');
 	},
 
 	formatTime: function(time) {
@@ -389,6 +393,10 @@ var playState = {
 			    //right restaurant
                 this.modScore(playState.SCORE_BONUS);
                 this.killCharacter(index);
+                if (this.spawn_time > 3) {
+                	this.spawn_time -= 0.5;
+                	this.spawnTimer.delay = this.spawn_time * Phaser.Timer.SECOND;
+				}
                 return;
 			}
 		}
