@@ -33,7 +33,8 @@ var playState = {
 	},
 	
 	Character: function(manager) {
-		this.id = Date.now();
+		//this.id = Date.now();
+		this.id = 0;
 
 		this.request = getPnj();
 
@@ -276,6 +277,7 @@ var playState = {
 	},
 	
 	update: function() {
+		console.log(this.characters.length);
 		//character selection
 		if (this.selectionManager.selectedCharacter == null) {
 			//console.log("a");
@@ -319,17 +321,24 @@ var playState = {
 	spawnCharacter: function() {
 		var character = new this.Character(this.selectionManager);
         this.characters.push(character);
-        this.characters = this.defragment(this.characters);
+        this.characters = this.updateArray(this.characters);
+        this.updateCharactersID();
 	},
 
-	defragment: function(array) {
+	updateArray: function(array) {
 		var array_defragmented = [];
 		for (var i = 0; i < array.length; i++) {
 			if (array[i] != null) {
 				array_defragmented.push(array[i]);
 			}
 		}
-		return array_defragmented;
+        return array_defragmented;
+	},
+
+	updateCharactersID: function() {
+        for (var i = 0; i < this.characters.length; i++) {
+            this.characters[i].id = i;
+        }
 	},
 
 	spawnStartingCharacters:function() {
@@ -346,7 +355,6 @@ var playState = {
                 }
                 else {
                     this.killCharacter(this.characters[i]);
-                    this.characters[i] = null;
                     this.modScore(-50);
                 }
             }
@@ -461,6 +469,9 @@ var playState = {
 
 	killCharacter: function(character) {
         character.kill();
+        this.characters[character.id] = null;
         character = null;
+        this.characters = this.updateArray(this.characters);
+        this.updateCharactersID();
 	},
 };
