@@ -4,6 +4,11 @@ var loadState = {
 		game.load.image('map', 'assets/map.png');
 		game.load.image('bulle_pnj', 'assets/bulle_pnj.png');
 		game.load.image('bulle_resto', 'assets/bulle_resto.png');
+        game.load.spritesheet('pnj2','assets/pnj/002.png',32,48);
+        game.load.spritesheet('pnj3','assets/pnj/003.png',32,48);
+        game.load.spritesheet('fenetre','assets/fenetre.png',32,32,2);
+        game.load.image('fond','assets/fond_titre.jpg');
+        game.load.image('maison','assets/maison.png');
 
 		for(var r in restos){
 			game.load.image(restos[r].image, 'assets/restos/'+restos[r].image+'.png');
