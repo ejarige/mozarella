@@ -1,7 +1,7 @@
-var tipsy;
+/*var tipsy;
 
 var MAX_WAITING = 5;
-var WAITING = [];
+var WAITING = [];*/
 
 var playState = {
 
@@ -18,9 +18,9 @@ var playState = {
 		this.unselectCharacter = function() {
             this.selectedCharacter = null;
 		};
-		this.unselectRestaurant = function() {
+		/*this.unselectRestaurant = function() {
 			this.selectedRestaurant = null;
-		};
+		};*/
 		this.unselectAll = function() {
     		this.selectedCharacter = null;
     		this.selectedRestaurant = null;
@@ -61,7 +61,7 @@ var playState = {
 		this.info.y = -62;
 
 		if(this.request.price){
-			this.price = game.add.text(this.info.position.x, this.info.position.y+5, this.request.price+'€', {font: "24px Arial", fontWeight: 'bold', fill: "green"})
+			this.price = game.add.text(this.info.position.x, this.info.position.y+5, this.request.price+'€', {font: "24px Arial", fontWeight: 'bold', fill: "green"});
 			this.price.anchor.setTo(.5,.5);
 			this.info.addChild(this.price);
 			this.price.x = 0;
@@ -198,7 +198,7 @@ var playState = {
 		this.toggleInfo();
 
 		this.onDown = function () {
-			if ((game.input.pointer1.isDown || game.input.activePointer.leftButton.isDown) && manager.selectedCharacter != null) {
+			if ((game.input.pointer1.isDown || game.input.activePointer.leftButton.isDown) && manager.selectedCharacter !== null) {
 				//move NPC to restaurant
 				this.isSelected = true;
 				manager.selectRestaurant(this);
@@ -245,6 +245,7 @@ var playState = {
 		}
 
 		//CONSTANTS
+		this.MAX_CHARACTERS_NUMBER = 8;
         this.GAME_TIMER_MINUTES = 2;
         this.GAME_TIMER_SECONDS = 0;
         this.SCORE_BONUS = 100;
@@ -264,7 +265,7 @@ var playState = {
         this.gameTimerLabel = game.add.text(960, 32, this.formatTime(this.GAME_TIMER_MINUTES*60+this.GAME_TIMER_SECONDS), {font: "48px Arial", fill: "#fff"});
 
         //character timer
-		this.characterTimer = game.time.events.loop(Phaser.Timer.SECOND, this.updateCharacterTimer, this);
+		game.time.events.loop(Phaser.Timer.SECOND, this.updateCharacterTimer, this);
 
         //score
         this.score = 0;
@@ -277,14 +278,13 @@ var playState = {
 	},
 	
 	update: function() {
-		console.log(this.characters.length);
 		//character selection
-		if (this.selectionManager.selectedCharacter == null) {
+		if (this.selectionManager.selectedCharacter === null) {
 			//console.log("a");
 		}
 		//restaurant selection
 		else {
-			if (this.selectionManager.selectedRestaurant == null) {
+			if (this.selectionManager.selectedRestaurant === null) {
 				//console.log("b");
 			}
 			else {
@@ -319,16 +319,19 @@ var playState = {
     },
 
 	spawnCharacter: function() {
-		var character = new this.Character(this.selectionManager);
-        this.characters.push(character);
-        this.characters = this.updateArray(this.characters);
-        this.updateCharactersID();
+		console.log(this.characters.length);
+		if (this.characters.length < this.MAX_CHARACTERS_NUMBER) {
+            var character = new this.Character(this.selectionManager);
+            this.characters.push(character);
+            this.characters = this.updateArray(this.characters);
+            this.updateCharactersID();
+        }
 	},
 
 	updateArray: function(array) {
 		var array_defragmented = [];
 		for (var i = 0; i < array.length; i++) {
-			if (array[i] != null) {
+			if (array[i] !== null) {
 				array_defragmented.push(array[i]);
 			}
 		}
@@ -445,7 +448,7 @@ var playState = {
 		var character = this.movingCharacters[index][0];
 		var restaurant = this.movingCharacters[index][1];
 		for (var i=0; i<character.request.results.length; i++) {
-			if (character.request.results[i] == restaurant.obj) {
+			if (character.request.results[i] === restaurant.obj) {
 			    //right restaurant
                 this.modScore(this.SCORE_BONUS);
                 this.killMovingCharacter(index);
@@ -473,5 +476,5 @@ var playState = {
         character = null;
         this.characters = this.updateArray(this.characters);
         this.updateCharactersID();
-	},
+	}
 };
