@@ -55,7 +55,6 @@ var playState = {
 
 		this.info = game.add.sprite(this.x, this.y-62, 'bulle_pnj');
 		this.info.anchor.setTo(.5,.5);
-		//test
 		this.sprite.addChild(this.info);
 		this.info.x = 0;
 		this.info.y = -62;
@@ -91,6 +90,9 @@ var playState = {
 		
 		//speed
 		this.speed = 200;
+
+		//timer
+		this.timer = 20; //in seconds
 
 		this.isSelected = false;
 		this.isMoving = false;
@@ -233,14 +235,17 @@ var playState = {
 		//all characters currently moving
 		this.movingCharacters = [];
 
+		//characters group
+		this.characters = [];
+
 		//create restaurants
 		for(var r in restos){
 			restos[r].obj = new this.Restaurant(this.selectionManager, restos[r]);
 		}
 
 		//CONSTANTS
-        this.TIMER_MINUTES = 2;
-        this.TIMER_SECONDS = 0;
+        this.GAME_TIMER_MINUTES = 2;
+        this.GAME_TIMER_SECONDS = 0;
         this.SCORE_BONUS = 100;
         this.spawn_time = 7; //in seconds
         this.NB_STARTING_CHARACTERS = 3;
@@ -248,14 +253,17 @@ var playState = {
         //spawn characters timer
         this.spawnTimer = game.time.events.loop(Phaser.Timer.SECOND * this.spawn_time, this.spawnCharacter, this);
         /*this.spawnTimer = game.time.create();
-        this.spawnTimer = this.timer.add(Phaser.Timer.SECOND * this.spawn_time, this.spawnCharacter, this);
+        this.spawnTimer = this.spawnTimer.add(Phaser.Timer.SECOND * this.spawn_time, this.spawnCharacter, this);
         this.spawnTimer.start();*/
 
         //game over timer
-        this.timer = game.time.create();
-        this.timerEvent = this.timer.add(Phaser.Timer.MINUTE * this.TIMER_MINUTES + Phaser.Timer.SECOND * this.TIMER_SECONDS, this.endTimer, this);
-        this.timer.start();
-        this.timerLabel = game.add.text(960, 32, this.formatTime(this.TIMER_MINUTES*60+this.TIMER_SECONDS), {font: "48px Arial", fill: "#fff"});
+        this.gameTimer = game.time.create();
+        this.timerEvent = this.gameTimer.add(Phaser.Timer.MINUTE * this.GAME_TIMER_MINUTES + Phaser.Timer.SECOND * this.GAME_TIMER_SECONDS, this.endGameTimer, this);
+        this.gameTimer.start();
+        this.gameTimerLabel = game.add.text(960, 32, this.formatTime(this.GAME_TIMER_MINUTES*60+this.GAME_TIMER_SECONDS), {font: "48px Arial", fill: "#fff"});
+
+        //character timer
+		this.characterTimer = game.time.events.loop(Phaser.Timer.SECOND, this.updateCharacterTimer, this);
 
         //score
         this.score = 0;
@@ -280,23 +288,24 @@ var playState = {
 			else {
 				//console.log('c');
 				this.selectionManager.selectedCharacter.toggleInfo();
+				this.selectionManager.selectedCharacter.isMoving = true;
 				this.movingCharacters.push([this.selectionManager.selectedCharacter, this.selectionManager.selectedRestaurant]);
 				this.selectionManager.unselectAll();
 			}
 		}
 		this.moveCharacters();
 
-        playState.timerLabel.text = this.formatTime(Math.round((playState.timerEvent.delay - playState.timer.ms) / 1000));
+        this.gameTimerLabel.text = this.formatTime(Math.round((this.timerEvent.delay - this.gameTimer.ms) / 1000));
 	},
 
     modScore: function(modifier) {
-        playState.score += modifier;
-        if (playState.score < 0) { playState.score = 0; }
-        playState.scoreLabel.text = 'Score : ' + playState.score;
+        this.score += modifier;
+        if (this.score < 0) { this.score = 0; }
+        this.scoreLabel.text = 'Score : ' + this.score;
     },
 
-	endTimer: function() {
-		this.timer.stop();
+	endGameTimer: function() {
+		this.gameTimer.stop();
         game.state.start('title');
 	},
 
@@ -308,7 +317,19 @@ var playState = {
     },
 
 	spawnCharacter: function() {
-		new this.Character(this.selectionManager);
+		var character = new this.Character(this.selectionManager);
+        this.characters.push(character);
+        this.characters = this.defragment(this.characters);
+	},
+
+	defragment: function(array) {
+		var array_defragmented = [];
+		for (var i = 0; i < array.length; i++) {
+			if (array[i] != null) {
+				array_defragmented.push(array[i]);
+			}
+		}
+		return array_defragmented;
 	},
 
 	spawnStartingCharacters:function() {
@@ -317,6 +338,22 @@ var playState = {
 		}
 	},
 
+	updateCharacterTimer: function() {
+		for (var i = 0; i < this.characters.length; i++) {
+			if (this.characters[i] != null && !this.characters[i].isMoving) {
+                if (this.characters[i].timer > 1) {
+                    this.characters[i].timer--;
+                }
+                else {
+                    this.killCharacter(this.characters[i]);
+                    this.characters[i] = null;
+                    this.modScore(-50);
+                }
+            }
+			//console.log(this.characters[i].timer);
+		}
+	}
+	,
 
 	//return path leading to selected restaurant
 	getPath: function(restaurant) {
@@ -387,6 +424,7 @@ var playState = {
                 character.sprite.play('down');
 				character.toggleInfo();
                 character.pathIndex = 0;
+                character.isMoving = false;
                 this.movingCharacters[index][0].stopGoingBack();
                 this.movingCharacters[index][0].unselect();
                 delete this.movingCharacters[index];
@@ -401,9 +439,9 @@ var playState = {
 		for (var i=0; i<character.request.results.length; i++) {
 			if (character.request.results[i] == restaurant.obj) {
 			    //right restaurant
-                this.modScore(playState.SCORE_BONUS);
-                this.killCharacter(index);
-                if (this.spawn_time > 3) {
+                this.modScore(this.SCORE_BONUS);
+                this.killMovingCharacter(index);
+                if (this.spawn_time > 2) {
                 	this.spawn_time -= 0.5;
                 	this.spawnTimer.delay = this.spawn_time * Phaser.Timer.SECOND;
 				}
@@ -415,10 +453,14 @@ var playState = {
         this.movingCharacters[index][0].goBack();
 	},
 
-	killCharacter: function(index) {
+	killMovingCharacter: function(index) {
         var character = this.movingCharacters[index][0];
-        character.kill();
         delete this.movingCharacters[index];
-		character = null;
+        this.killCharacter(character);
+	},
+
+	killCharacter: function(character) {
+        character.kill();
+        character = null;
 	},
 };

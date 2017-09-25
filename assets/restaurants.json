@@ -98,8 +98,8 @@ var restos =
     "image"     : "yvette",
     "x"         : 444,
     "y"         : 28,
-    "priceMin"  : 0,
-    "priceMax"  : 0,
+    "priceMin"  : 10,
+    "priceMax"  : 30,
     "food"      : [
       "salade",
       "poulet"
@@ -132,7 +132,7 @@ var restos =
     "priceMin"  : 4,
     "priceMax"  : 8,
     "food"      : [
-      "Sandwich"
+      "sandwich"
     ],
     "path"      : [
         //[263,608],[353,599],[454,596],[464,598],[493,550],[554,478],[622,401],[712,297],[766,308]
