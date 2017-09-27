@@ -99,7 +99,6 @@ var titleState = {
             rand = Math.random();
             if(fen.frame == 0){
                 fen.frame = 1;
-                console.log(fen);
                 game.state.start('play');
             }
 

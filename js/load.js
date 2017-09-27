@@ -2,13 +2,21 @@ var NB_PNJ = 8;
 var loadState = {
 	preload: function() {
 		game.load.image('map', 'assets/map.png');
-		game.load.image('bulle_pnj', 'assets/bulle_pnj.png');
+		game.load.spritesheet('bulle_pnj', 'assets/bulle_pnj.png',98,63,3);
+		//game.load.image('bulle_pnj', 'assets/bulle_pnj.png');
+        /*game.load.image('bulle_pnj_orange', 'assets/bulle_pnj.png');
+        game.load.image('bulle_pnj_red', 'assets/bulle_pnj.png');*/
 		game.load.image('bulle_resto', 'assets/bulle_resto.png');
         game.load.spritesheet('pnj2','assets/pnj/002.png',32,48);
         game.load.spritesheet('pnj3','assets/pnj/003.png',32,48);
         game.load.spritesheet('fenetre','assets/fenetre.png',32,32,2);
+        game.load.spritesheet('emotion_angry','assets/anim_angry.png',32,32,8);
+        game.load.spritesheet('emotion_love','assets/anim_heart.png',32,32,8);
         game.load.image('fond','assets/fond_titre.jpg');
         game.load.image('maison','assets/maison.png');
+
+        game.load.audio('music_game','assets/athletic_theme.mp3');
+        game.load.audio('pop','assets/pop.mp3');
 
 		for(var r in restos){
 			game.load.image(restos[r].image, 'assets/restos/'+restos[r].image+'.png');

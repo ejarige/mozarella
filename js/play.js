@@ -10,18 +10,38 @@ var playState = {
 		this.selectedRestaurant = null;
 
 		this.selectCharacter = function(character) {
+			if (this.selectedCharacter != null) {
+				this.selectedCharacter.isSelected = false;
+			}
 			this.selectedCharacter = character;
+            this.selectedCharacter.isSelected = true;
 		};
 		this.selectRestaurant = function(restaurant) {
+            if (this.selectedRestaurant != null) {
+                this.selectedRestaurant.isSelected = false;
+            }
 			this.selectedRestaurant = restaurant;
+            this.selectedRestaurant.isSelected = true;
 		};
 		this.unselectCharacter = function() {
+            if (this.selectedCharacter != null) {
+                this.selectedCharacter.isSelected = false;
+            }
             this.selectedCharacter = null;
 		};
 		/*this.unselectRestaurant = function() {
+			if (this.selectedRestaurant != null) {
+                this.selectedRestaurant.isSelected = false;
+            }
 			this.selectedRestaurant = null;
 		};*/
 		this.unselectAll = function() {
+            if (this.selectedCharacter != null) {
+                this.selectedCharacter.isSelected = false;
+            }
+            if (this.selectedRestaurant != null) {
+                this.selectedRestaurant.isSelected = false;
+            }
     		this.selectedCharacter = null;
     		this.selectedRestaurant = null;
 		};
@@ -38,8 +58,12 @@ var playState = {
 
 		this.request = getPnj();
 
+		this.tween = null;
+
 		this.x = getRand(199,416);
 		this.y = getRand(608,650);
+		this.baseX = this.x;
+		this.baseY = this.y;
 
 		this.sprite = game.add.sprite(this.x, this.y, 'pnj-'+getRand(1,NB_PNJ));
 
@@ -98,6 +122,9 @@ var playState = {
 		this.isSelected = false;
 		this.isMoving = false;
 		this.isGoingBack = false;
+		this.isJumping = false;
+		this.isEmoting = false;
+		this.hasPlayedEmotion = false;
 
 		this.goBack = function() {
 		    this.isGoingBack = true;
@@ -108,6 +135,7 @@ var playState = {
 		};
 
 		this.unselect = function() {
+			this.isJumping = false;
 		    this.isSelected = false;
         };
 
@@ -126,16 +154,26 @@ var playState = {
 			this.info.alpha = !this.info.alpha;
 		};
 
+		this.stopJumping = function() {
+            if (this.tween != null) {
+                this.tween.stop();
+            }
+            this.isJumping = false;
+            this.sprite.x = this.baseX;
+            this.sprite.y = this.baseY;
+		};
+
 		this.onDown = function() {
 			if (game.input.activePointer.leftButton.isDown && !this.isMoving) {
 				if (!this.isSelected) {
+					if (manager.selectedCharacter != null) {
+                        manager.selectedCharacter.stopJumping();
+					}
                     manager.selectCharacter(this);
-                    this.isSelected = true;
-                    console.log(this.request);
                 }
                 else {
 					manager.unselectCharacter();
-					this.isSelected = false;
+					this.stopJumping();
 				}
 			}
 		};
@@ -200,7 +238,7 @@ var playState = {
 		this.onDown = function () {
 			if ((game.input.pointer1.isDown || game.input.activePointer.leftButton.isDown) && manager.selectedCharacter !== null) {
 				//move NPC to restaurant
-				this.isSelected = true;
+                manager.selectedCharacter.stopJumping();
 				manager.selectRestaurant(this);
 			}
 		};
@@ -219,7 +257,6 @@ var playState = {
 	},
 
 	preload: function() {
-		game.load.image('star', 'assets/star.png');
 	},
 	
 	create: function() {
@@ -227,6 +264,8 @@ var playState = {
 		game.canvas.oncontextmenu = function (e) { e.preventDefault(); };
 		
 		game.add.image(0, 0, 'map');
+
+		game.add.audio('music_game').play();
 
 		game.physics.startSystem(Phaser.Physics.ARCADE);
 
@@ -296,6 +335,7 @@ var playState = {
 			}
 		}
 		this.moveCharacters();
+		this.selectedCharacterJump();
 
         this.gameTimerLabel.text = this.formatTime(Math.round((this.timerEvent.delay - this.gameTimer.ms) / 1000));
 	},
@@ -319,8 +359,8 @@ var playState = {
     },
 
 	spawnCharacter: function() {
-		console.log(this.characters.length);
 		if (this.characters.length < this.MAX_CHARACTERS_NUMBER) {
+            game.add.audio('pop').play();
             var character = new this.Character(this.selectionManager);
             this.characters.push(character);
             this.characters = this.updateArray(this.characters);
@@ -355,16 +395,35 @@ var playState = {
 			if (this.characters[i] != null && !this.characters[i].isMoving) {
                 if (this.characters[i].timer > 1) {
                     this.characters[i].timer--;
+                    if (this.characters[i].timer == 10) {
+                    	this.characters[i].info.frame = 1;
+                        game.add.tween(this.characters[i].info).from( { y: this.characters[i].info.y-20 }, 100, Phaser.Easing.Bounce.Out, true);
+					}
+					else if (this.characters[i].timer == 5) {
+                        this.characters[i].info.frame = 2;
+                        game.add.tween(this.characters[i].info).from( { y: this.characters[i].info.y-20 }, 100, Phaser.Easing.Bounce.Out, true);
+					}
                 }
                 else {
-                    this.killCharacter(this.characters[i]);
-                    this.modScore(-50);
+                    //this.killCharacter(this.characters[i]);
+                    //this.modScore(-50);
+
+                    if (!this.characters[i].hasPlayedEmotion) {
+                        this.playEmotion(this.characters[i], 'emotion_angry');
+                        this.characters[i].toggleInfo();
+                        this.modScore(-50);
+                        this.characters[i].hasPlayedEmotion = true;
+                    }
+                    if (!this.characters[i].isEmoting) {
+                        this.killCharacter(this.characters[i]);
+                    }
                 }
             }
+
+
 			//console.log(this.characters[i].timer);
 		}
-	}
-	,
+	},
 
 	//return path leading to selected restaurant
 	getPath: function(restaurant) {
@@ -450,18 +509,39 @@ var playState = {
 		for (var i=0; i<character.request.results.length; i++) {
 			if (character.request.results[i] === restaurant.obj) {
 			    //right restaurant
-                this.modScore(this.SCORE_BONUS);
-                this.killMovingCharacter(index);
-                if (this.spawn_time > 2) {
-                	this.spawn_time -= 0.5;
-                	this.spawnTimer.delay = this.spawn_time * Phaser.Timer.SECOND;
-				}
+				if (!character.hasPlayedEmotion) {
+					this.playEmotion(character, 'emotion_love');
+                    this.modScore(this.SCORE_BONUS);
+                    character.hasPlayedEmotion = true;
+                }
+                if (!character.isEmoting) {
+                    this.killMovingCharacter(index);
+                    if (this.spawn_time > 2) {
+                        this.spawn_time -= 0.5;
+                        this.spawnTimer.delay = this.spawn_time * Phaser.Timer.SECOND;
+                    }
+                }
                 return;
 			}
 		}
 		//wrong restaurant
-        this.modScore(-50);
-        this.movingCharacters[index][0].goBack();
+		if (!character.hasPlayedEmotion) {
+			this.playEmotion(character, 'emotion_angry');
+            this.modScore(-50);
+            character.hasPlayedEmotion = true;
+		}
+		if (!character.isEmoting) {
+            this.movingCharacters[index][0].goBack();
+            character.hasPlayedEmotion = false;
+		}
+	},
+
+	playEmotion: function(character, emotion) {
+		character.isEmoting = true;
+		var emote = game.add.sprite(character.sprite.body.x+4, character.sprite.body.y-32, emotion);
+		var anim = emote.animations.add('anim');
+		anim.play(10, false, true);
+    	anim.onComplete.add(function () { character.isEmoting = false; }, this);
 	},
 
 	killMovingCharacter: function(index) {
@@ -476,5 +556,23 @@ var playState = {
         character = null;
         this.characters = this.updateArray(this.characters);
         this.updateCharactersID();
-	}
+	},
+
+	selectedCharacterJump: function() {
+		/*for (var i = 0; i<this.characters.length; i++) {
+			if (this.characters[i].isSelected) {
+				if (!this.characters[i].isJumping) {
+
+                    tween.onComplete.add(function() { this.selectionManager.selectedCharacter.isJumping = false; }, this);
+				}
+			}
+		}*/
+		if (this.selectionManager.selectedCharacter != null) {
+            if (!this.selectionManager.selectedCharacter.isJumping) {
+                this.selectionManager.selectedCharacter.tween = game.add.tween(this.selectionManager.selectedCharacter.sprite).from({y: this.selectionManager.selectedCharacter.sprite.y - 10}, 500, Phaser.Easing.Bounce.Out, true);
+                this.selectionManager.selectedCharacter.isJumping = true;
+                this.selectionManager.selectedCharacter.tween.onComplete.add(function() { this.selectionManager.selectedCharacter.isJumping = false; }, this);
+            }
+        }
+	},
 };
