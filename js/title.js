@@ -47,6 +47,10 @@ var titleState = {
 
         game.physics.arcade.enable(pnj2);
 
+        game.sound.stopAll();
+        game.add.audio('music_title').play();
+
+
         pnj2.callAll('animations.add','animations','left',[0,1,2],10,true);
         pnj2.callAll('animations.add','animations','right',[6,7,8],10,true);
         pnj2.callAll('animations.add','animations','down',[3,4,5],10,true);

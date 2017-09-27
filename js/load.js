@@ -16,6 +16,8 @@ var loadState = {
         game.load.image('maison','assets/maison.png');
 
         game.load.audio('music_game','assets/athletic_theme.mp3');
+        game.load.audio('music_title','assets/flower_garden.mp3');
+        game.load.audio('music_score','assets/map_theme.mp3');
         game.load.audio('pop','assets/pop.mp3');
 
 		for(var r in restos){

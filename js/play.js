@@ -265,6 +265,7 @@ var playState = {
 		
 		game.add.image(0, 0, 'map');
 
+        game.sound.stopAll();
 		game.add.audio('music_game').play();
 
 		game.physics.startSystem(Phaser.Physics.ARCADE);
