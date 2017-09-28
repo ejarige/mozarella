@@ -103,9 +103,19 @@ var titleState = {
             rand = Math.random();
             if(fen.frame == 0){
                 fen.frame = 1;
-                game.state.start('play');
+                game.state.start('tutorial');
             }
 
         }
     }
 };
+
+/*
+Votre objectif est d'amener chaque étudiant dans le restaurant convenant le mieux à ses attentes. Pour cela, cliquez sur un étudiant pour le selectionner, puis cliquez sur un restaurant correspondant à ses demandes.
+Vous pouvez voir toutes les informations concernant chaque restaurant simplement en passant votre curseur dessus.
+Envoyez un maximum d'étudiants à bon port avant la fin du temps imparti !
+
+Attention : chaque erreur sera sanctionnée sur votre score. De plus, les étudiants n’aime pas trop attendre, ils pourraient se résigner et ne pas prendre de déjeuner si vous les ignorez trop longtemps.
+
+(Cliquez pour commencer)
+*/

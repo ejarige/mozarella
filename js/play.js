@@ -67,25 +67,25 @@ var playState = {
 					posX = 200;
 					break;
 				case 1:
-                    posX = 230;
+                    posX = 240;
 					break;
 				case 2:
-                    posX = 260;
+                    posX = 280;
 					break;
 				case 3:
-                    posX = 290;
-					break;
-				case 4:
                     posX = 320;
 					break;
+				case 4:
+                    posX = 360;
+					break;
 				case 5:
-                    posX = 350;
+                    posX = 400;
 					break;
 				case 6:
-                    posX = 380;
+                    posX = 220;
 					break;
 				case 7:
-                    posX = 410;
+                    posX = 380;
 					break;
 			}
 			return posX;
@@ -97,15 +97,17 @@ var playState = {
                 case 0:
 				case 2:
 				case 4:
-				case 6:
                     posY = 640;
                     break;
                 case 1:
 				case 3:
 				case 5:
-				case 7:
                     posY = 680;
                     break;
+				case 6:
+				case 7:
+					posY = 720;
+					break;
             }
             return posY;
         };
@@ -122,7 +124,12 @@ var playState = {
 					}
 				}
 			}
+			this.allocatedPositions[posID] = true;
 			return posID;
+		};
+
+		this.clearAllocatedPosID = function(id) {
+			this.allocatedPositions[id] = false;
 		};
 	},
 	
@@ -143,6 +150,7 @@ var playState = {
         this.y = positionManager.getY(this.posID);
 		this.baseX = this.x;
 		this.baseY = this.y;
+		//this.z = -this.y;
 
 		this.sprite = game.add.sprite(this.x, this.y, 'pnj-'+getRand(1,NB_PNJ));
 
@@ -196,7 +204,7 @@ var playState = {
 		this.speed = 200;
 
 		//timer
-		this.timer = 20; //in seconds
+		this.timer = 25; //in seconds
 
 		this.isSelected = false;
 		this.isMoving = false;
@@ -240,6 +248,10 @@ var playState = {
             this.isJumping = false;
             this.sprite.x = this.baseX;
             this.sprite.y = this.baseY;
+		};
+
+		this.clearPosID = function() {
+			positionManager.clearAllocatedPosID(this.posID);
 		};
 
 		this.onDown = function() {
@@ -366,11 +378,13 @@ var playState = {
 
 		//CONSTANTS
 		this.MAX_CHARACTERS_NUMBER = 8;
-        this.GAME_TIMER_MINUTES = 2;
-        this.GAME_TIMER_SECONDS = 0;
+        this.GAME_TIMER_MINUTES = 0;
+        this.GAME_TIMER_SECONDS = 5;
         this.SCORE_BONUS = 100;
         this.spawn_time = 7; //in seconds
         this.NB_STARTING_CHARACTERS = 3;
+
+        this.gameEnded = false;
 
         //spawn characters timer
         this.spawnTimer = game.time.events.loop(Phaser.Timer.SECOND * this.spawn_time, this.spawnCharacter, this);
@@ -429,7 +443,13 @@ var playState = {
 
 	endGameTimer: function() {
 		this.gameTimer.stop();
-        game.state.start('title');
+		this.gameEnded = true;
+        game.input.activePointer.leftButton.onDown.removeAll();
+        game.time.events.add(Phaser.Timer.SECOND * 2, this.goToScoreState, this);
+	},
+
+	goToScoreState: function() {
+        game.state.start('score');
 	},
 
 	formatTime: function(time) {
@@ -440,7 +460,7 @@ var playState = {
     },
 
 	spawnCharacter: function() {
-		if (this.characters.length < this.MAX_CHARACTERS_NUMBER) {
+		if (this.characters.length < this.MAX_CHARACTERS_NUMBER && !this.gameEnded) {
             game.add.audio('pop').play();
             var character = new this.Character(this.selectionManager, this.positionManager);
             this.characters.push(character);
@@ -495,14 +515,12 @@ var playState = {
                         this.modScore(-50);
                         this.characters[i].hasPlayedEmotion = true;
                     }
+
                     if (!this.characters[i].isEmoting) {
                         this.killCharacter(this.characters[i]);
                     }
                 }
             }
-
-
-			//console.log(this.characters[i].timer);
 		}
 	},
 
@@ -516,8 +534,14 @@ var playState = {
 	},
 
 	moveCharacters: function() {
-		for(var c in this.movingCharacters) {
-            this.moveCharacter(c, this.movingCharacters[c][0].isGoingBack);
+		for (var c in this.movingCharacters) {
+            if (!this.gameEnded) {
+                this.moveCharacter(c, this.movingCharacters[c][0].isGoingBack);
+            }
+			else {
+            	this.movingCharacters[c][0].sprite.body.velocity.x = 0;
+                this.movingCharacters[c][0].sprite.body.velocity.y = 0;
+			}
 		}
 	},
 
@@ -620,7 +644,7 @@ var playState = {
 	playEmotion: function(character, emotion) {
 		character.isEmoting = true;
 		var emote = game.add.sprite(character.sprite.body.x+4, character.sprite.body.y-32, emotion);
-		var anim = emote.animations.add('anim');
+		var anim = emote.animations.add();
 		anim.play(10, false, true);
     	anim.onComplete.add(function () { character.isEmoting = false; }, this);
 	},
@@ -632,6 +656,7 @@ var playState = {
 	},
 
 	killCharacter: function(character) {
+		character.clearPosID();
         character.kill();
         this.characters[character.id] = null;
         character = null;
@@ -640,14 +665,6 @@ var playState = {
 	},
 
 	selectedCharacterJump: function() {
-		/*for (var i = 0; i<this.characters.length; i++) {
-			if (this.characters[i].isSelected) {
-				if (!this.characters[i].isJumping) {
-
-                    tween.onComplete.add(function() { this.selectionManager.selectedCharacter.isJumping = false; }, this);
-				}
-			}
-		}*/
 		if (this.selectionManager.selectedCharacter != null) {
             if (!this.selectionManager.selectedCharacter.isJumping) {
                 this.selectionManager.selectedCharacter.tween = game.add.tween(this.selectionManager.selectedCharacter.sprite).from({y: this.selectionManager.selectedCharacter.sprite.y - 10}, 500, Phaser.Easing.Bounce.Out, true);
