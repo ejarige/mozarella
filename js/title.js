@@ -36,6 +36,13 @@ var titleState = {
         game.add.image(400,120,'maison');
         pnj2 = game.add.group();
 
+        game.add.text(523, 230, "^", { fontSize: '24px', fill: '#000'});
+        game.add.text(450, 240, "[Commencer]", { fontSize: '24px', fill: '#000'});
+
+        game.add.text(50, 640, "Eric JARRIGE", { fontSize: '24px', fill: '#000'});
+        game.add.text(50, 670, "Maylis LELIEPAULT", { fontSize: '24px', fill: '#000'});
+        game.add.text(50, 700, "Anthony MARIN", { fontSize: '24px', fill: '#000'});
+
         pnj2.enableBody = true;
         pnj2.body = true;
         pnj2.body.collideWorldBounds = true;

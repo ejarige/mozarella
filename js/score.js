@@ -9,6 +9,8 @@ var scoreState = {
         var animWoosh = woosh.animations.add();
         animWoosh.play(10, false);
 
+        game.add.text(340, 620, "(Cliquez pour revenir à l'écran-titre)", { fontSize: '24px', fill: '#BF0000'});
+
         game.time.events.add(Phaser.Timer.SECOND * 0.5, this.displayScoreText, this);
     },
 

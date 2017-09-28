@@ -9,16 +9,18 @@ var loadState = {
         game.load.spritesheet('fenetre','assets/fenetre.png',32,32,2);
         game.load.spritesheet('emotion_angry','assets/anim_angry.png',32,32,8);
         game.load.spritesheet('emotion_love','assets/anim_heart.png',32,32,8);
+		game.load.spritesheet('tutosprite','assets/tutosprite.png',1088,100,8);
         game.load.image('fond','assets/fond_titre.jpg');
         game.load.image('maison','assets/maison.png');
 
         game.load.spritesheet('woosh','assets/woosh.png',840,288,11);
-        game.load.spritesheet('score','assets/score.png',400,100,6);
+        game.load.spritesheet('score','assets/score.png',400,100,12);
 
         game.load.audio('music_game','assets/athletic_theme.mp3');
         game.load.audio('music_title','assets/flower_garden.mp3');
         game.load.audio('music_score','assets/map_theme.mp3');
         game.load.audio('pop','assets/pop.mp3');
+        game.load.audio('ding','assets/ding.mp3');
 
 		for(var r in restos){
 			game.load.image(restos[r].image, 'assets/restos/'+restos[r].image+'.png');

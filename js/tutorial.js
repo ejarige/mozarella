@@ -14,11 +14,25 @@ var tutorialState = {
         game.add.text(90, 500, "donc se résigner et ne pas prendre de repas si vous les ignorez trop longtemps.", { fontSize: '24px', fill: '#fff'});
         game.add.text(360, 530, "Ne les faites pas trop attendre !", { fontSize: '24px', fill: '#fff'});
         game.add.text(390, 620, "(Cliquez pour commencer)", { fontSize: '24px', fill: '#fff'});
-
-        this.onLeftDown = function() {
+		        
+		pnj3 = game.add.sprite(544, 700,'pnj3');
+        game.physics.arcade.enable(pnj3);
+        pnj3.body.collideWorldBounds = true;
+        pnj3.animations.add('stay',[3,4,5],10,true);
+		
+		tutosprite = game.add.sprite(0, 10,'tutosprite');
+        game.physics.arcade.enable(tutosprite);
+        tutosprite.body.collideWorldBounds = true;
+        tutosprite.animations.add('anim',[0,1,2],10,true);
+        
+		this.onLeftDown = function() {
             game.state.start('play');
             game.input.activePointer.leftButton.onDown.removeAll();
         };
         game.input.activePointer.leftButton.onDown.add(this.onLeftDown, this);
     },
+	update: function(){
+		    pnj3.animations.play('stay');
+			tutosprite.animations.play('anim',5);
+	},
 };

@@ -442,8 +442,12 @@ var playState = {
     },
 
 	endGameTimer: function() {
-		this.gameTimer.stop();
+        game.sound.stopAll();
+        var ding = game.add.audio('ding');
+        ding.volume = 2;
+        ding.play();
 		this.gameEnded = true;
+		this.killAllCharacters();
         game.input.activePointer.leftButton.onDown.removeAll();
         game.time.events.add(Phaser.Timer.SECOND * 2, this.goToScoreState, this);
 	},
@@ -482,6 +486,7 @@ var playState = {
 	updateCharactersID: function() {
         for (var i = 0; i < this.characters.length; i++) {
             this.characters[i].id = i;
+            console.log(i);
         }
 	},
 
@@ -662,6 +667,13 @@ var playState = {
         character = null;
         this.characters = this.updateArray(this.characters);
         this.updateCharactersID();
+	},
+
+	killAllCharacters: function() {
+		var nbCharacters = this.characters.length;
+		for (var i=0; i<nbCharacters; i++) {
+			this.killCharacter(this.characters[0]);
+		}
 	},
 
 	selectedCharacterJump: function() {
