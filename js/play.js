@@ -51,8 +51,82 @@ var playState = {
 		};
 		game.input.activePointer.rightButton.onDown.add(this.onRightDown, this);
 	},
+
+	PositionManager: function() {
+		this.MAX_POSITION_ID = 7;
+
+		this.allocatedPositions = [];
+		for (var i=0; i<=this.MAX_POSITION_ID; i++) {
+			this.allocatedPositions[i] = false;
+		}
+
+		this.getX = function(id) {
+			var posX;
+			switch (id) {
+				case 0:
+					posX = 200;
+					break;
+				case 1:
+                    posX = 230;
+					break;
+				case 2:
+                    posX = 260;
+					break;
+				case 3:
+                    posX = 290;
+					break;
+				case 4:
+                    posX = 320;
+					break;
+				case 5:
+                    posX = 350;
+					break;
+				case 6:
+                    posX = 380;
+					break;
+				case 7:
+                    posX = 410;
+					break;
+			}
+			return posX;
+		};
+
+        this.getY = function(id) {
+            var posY;
+            switch (id) {
+                case 0:
+				case 2:
+				case 4:
+				case 6:
+                    posY = 640;
+                    break;
+                case 1:
+				case 3:
+				case 5:
+				case 7:
+                    posY = 680;
+                    break;
+            }
+            return posY;
+        };
+
+		this.getAssignedPosID = function() {
+			var posID = game.rnd.integerInRange(0, this.MAX_POSITION_ID);
+			if (this.allocatedPositions[posID]) {
+				while (this.allocatedPositions[posID]) {
+					if (posID == this.MAX_POSITION_ID) {
+						posID = 0;
+					}
+					else {
+						posID++;
+					}
+				}
+			}
+			return posID;
+		};
+	},
 	
-	Character: function(manager) {
+	Character: function(selectionManager, positionManager) {
 		//this.id = Date.now();
 		this.id = 0;
 
@@ -60,8 +134,13 @@ var playState = {
 
 		this.tween = null;
 
-		this.x = getRand(199,416);
-		this.y = getRand(608,650);
+		//this.x = getRand(199,416);
+		//this.y = getRand(608,650);
+		//this.x = 200;
+		//this.y = 640;
+		this.posID = positionManager.getAssignedPosID();
+		this.x = positionManager.getX(this.posID);
+        this.y = positionManager.getY(this.posID);
 		this.baseX = this.x;
 		this.baseY = this.y;
 
@@ -166,13 +245,13 @@ var playState = {
 		this.onDown = function() {
 			if (game.input.activePointer.leftButton.isDown && !this.isMoving) {
 				if (!this.isSelected) {
-					if (manager.selectedCharacter != null) {
-                        manager.selectedCharacter.stopJumping();
+					if (selectionManager.selectedCharacter != null) {
+                        selectionManager.selectedCharacter.stopJumping();
 					}
-                    manager.selectCharacter(this);
+                    selectionManager.selectCharacter(this);
                 }
                 else {
-					manager.unselectCharacter();
+					selectionManager.unselectCharacter();
 					this.stopJumping();
 				}
 			}
@@ -270,8 +349,9 @@ var playState = {
 
 		game.physics.startSystem(Phaser.Physics.ARCADE);
 
-		//singleton manager
+		//singleton managers
 		this.selectionManager = new this.SelectionManager();
+		this.positionManager = new this.PositionManager();
 
 		//all characters currently moving
 		this.movingCharacters = [];
@@ -362,7 +442,7 @@ var playState = {
 	spawnCharacter: function() {
 		if (this.characters.length < this.MAX_CHARACTERS_NUMBER) {
             game.add.audio('pop').play();
-            var character = new this.Character(this.selectionManager);
+            var character = new this.Character(this.selectionManager, this.positionManager);
             this.characters.push(character);
             this.characters = this.updateArray(this.characters);
             this.updateCharactersID();
