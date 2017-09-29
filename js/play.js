@@ -378,8 +378,8 @@ var playState = {
 
 		//CONSTANTS
 		this.MAX_CHARACTERS_NUMBER = 8;
-        this.GAME_TIMER_MINUTES = 0;
-        this.GAME_TIMER_SECONDS = 5;
+        this.GAME_TIMER_MINUTES = 2;
+        this.GAME_TIMER_SECONDS = 0;
         this.SCORE_BONUS = 100;
         this.spawn_time = 7; //in seconds
         this.NB_STARTING_CHARACTERS = 3;

@@ -1,27 +1,3 @@
-/*var titleState = {
-	preload: function() {
-        var pnj2;
-        var fenetre;
-
-        var data = [
-            {x:515, y:200, state:0}
-        ]
-	},
-
-	create: function() {
-		var startLabel = game.add.text(80, game.world.height-80, 'Press the "W" key to start', {font: '25px Arial', fill:'#ffffff'});
-		
-		var wkey = game.input.keyboard.addKey(Phaser.Keyboard.W);
-		wkey.onDown.addOnce(this.start, this);
-
-		//game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
-	},
-
-	start: function() {
-		game.state.start('play');
-	}
-};*/
-
 function preload() {
     var pnj2;
     var fenetre;
@@ -116,13 +92,3 @@ var titleState = {
         }
     }
 };
-
-/*
-Votre objectif est d'amener chaque étudiant dans le restaurant convenant le mieux à ses attentes. Pour cela, cliquez sur un étudiant pour le selectionner, puis cliquez sur un restaurant correspondant à ses demandes.
-Vous pouvez voir toutes les informations concernant chaque restaurant simplement en passant votre curseur dessus.
-Envoyez un maximum d'étudiants à bon port avant la fin du temps imparti !
-
-Attention : chaque erreur sera sanctionnée sur votre score. De plus, les étudiants n’aime pas trop attendre, ils pourraient se résigner et ne pas prendre de déjeuner si vous les ignorez trop longtemps.
-
-(Cliquez pour commencer)
-*/

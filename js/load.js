@@ -14,7 +14,7 @@ var loadState = {
         game.load.image('maison','assets/maison.png');
 
         game.load.spritesheet('woosh','assets/woosh.png',840,288,11);
-        game.load.spritesheet('score','assets/score.png',400,100,12);
+        game.load.spritesheet('score','assets/score.png',400,100,6);
 
         game.load.audio('music_game','assets/athletic_theme.mp3');
         game.load.audio('music_title','assets/flower_garden.mp3');
